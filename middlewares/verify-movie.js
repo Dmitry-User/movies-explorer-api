@@ -12,7 +12,7 @@ const verifyMovie = celebrate({
     trailerLink: Joi.string().required().pattern(REGEX),
     thumbnail: Joi.string().required().pattern(REGEX),
     owner: Joi.string().required().hex().length(24),
-    movieId: Joi.required(),
+    movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
   }),
