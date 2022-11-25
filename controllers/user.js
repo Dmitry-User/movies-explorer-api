@@ -5,17 +5,9 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
 const { DEV_SECRET } = require('../utils/constants');
 
-// const getUsers = (req, res, next) => {
-//   User.find({})
-//     .then((users) => {
-//       res.send(users);
-//     })
-//     .catch(next);
-// };
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)

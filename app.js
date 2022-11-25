@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
-
 const router = require('./routes');
 const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
