@@ -23,7 +23,7 @@ const createUser = (req, res, next) => {
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      user,
+      ...user,
       password: hash, // записываем хеш в базу
     }))
     .then((newUser) => {
@@ -44,7 +44,7 @@ const updateUser = (req, res, next) => {
   const userId = req.user._id;
   const { ...user } = req.body;
 
-  User.findByIdAndUpdate(userId, { ...user }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(userId, ...user, { new: true, runValidators: true })
     .orFail(new NotFoundError('Пользователь с указанным _id не найден'))
     .then((updatedUser) => {
       res.send(updatedUser);
