@@ -19,16 +19,11 @@ const getUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name,
-    email,
-    password,
-  } = req.body;
+  const { password, ...user } = req.body;
 
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name,
-      email,
+      user,
       password: hash, // записываем хеш в базу
     }))
     .then((newUser) => {
