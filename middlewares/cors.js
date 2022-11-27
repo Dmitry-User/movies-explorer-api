@@ -1,6 +1,6 @@
 const allowedCors = [
-  'https://goodplaces.nomoredomains.icu',
-  'http://goodplaces.nomoredomains.icu',
+  'https://moviexplorers.nomoredomains.club',
+  'http://moviexplorers.nomoredomains.club',
   'https://localhost:3000',
   'http://localhost:3000',
 ];

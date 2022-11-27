@@ -19,12 +19,10 @@ app.use(limiter);
 app.use(cors);
 app.use(cookieParser());
 app.use(helmet());
-app.use(express.json()); // встроенный метод, вместо body-parser
-
-app.use(requestLogger); // логгер запросов
+app.use(express.json());
+app.use(requestLogger);
 app.use(router);
-
-app.use(errorLogger); // логгер ошибок
+app.use(errorLogger);
 app.use(errors());
 app.use(handleError);
 
