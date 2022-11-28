@@ -1,7 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 const { REGEX } = require('../utils/constants');
 
-const verifyMovie = celebrate({
+const verifyMovieCreate = celebrate({
   body: Joi.object().keys({
     country: Joi.string().required(),
     director: Joi.string().required(),
@@ -11,7 +11,6 @@ const verifyMovie = celebrate({
     image: Joi.string().required().pattern(REGEX),
     trailerLink: Joi.string().required().pattern(REGEX),
     thumbnail: Joi.string().required().pattern(REGEX),
-    owner: Joi.string().required().hex().length(24),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
@@ -25,6 +24,6 @@ const verifyMovieId = celebrate({
 });
 
 module.exports = {
-  verifyMovie,
+  verifyMovieCreate,
   verifyMovieId,
 };

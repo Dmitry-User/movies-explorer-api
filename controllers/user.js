@@ -10,7 +10,7 @@ const { DEV_SECRET } = require('../utils/constants');
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
-  User.findById(req.user._id)
+  User.findById(req.user._id, { _id: 0 })
     .orFail(new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => {
       res.send(user);
@@ -19,18 +19,10 @@ const getUser = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name,
-    email,
-    password,
-  } = req.body;
+  const { password, ...userData } = req.body;
 
   bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name,
-      email,
-      password: hash, // записываем хеш в базу
-    }))
+    .then((hash) => User.create({ ...userData, password: hash }))
     .then((newUser) => {
       res.send(newUser);
     })
@@ -58,6 +50,9 @@ const updateUser = (req, res, next) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные'));
       }
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с указанным email уже зарегистрирован'));
+      }
       return next(err);
     });
 };
@@ -75,18 +70,20 @@ const login = (req, res, next) => {
       res
         .cookie('authorization', token, {
           httpOnly: true,
-          sameSite: 'None',
-          secure: true,
+          // sameSite: 'None',
+          // secure: true,
           maxAge: 3600000 * 24 * 7,
         })
-        .send({ message: 'Авторизация прошла успешно!' });
+        .send({ token });
     })
     .catch(next);
 };
 
 const logout = (req, res, next) => {
   try {
-    res.clearCookie('authorization').send({ message: 'Вы вышли из профиля' });
+    res
+      .clearCookie('authorization')
+      .send({ message: 'Вы вышли из профиля' });
   } catch (err) {
     next(err);
   }

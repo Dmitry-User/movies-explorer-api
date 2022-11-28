@@ -9,7 +9,11 @@ const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
 const handleError = require('./middlewares/handle-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-const { MONGO_URL, PORT } = require('./utils/config');
+
+const {
+  PORT = 3000,
+  MONGO_URL = 'mongodb://localhost:27017/bitmoviesdb',
+} = process.env;
 
 mongoose.connect(MONGO_URL);
 
@@ -26,4 +30,6 @@ app.use(errorLogger);
 app.use(errors());
 app.use(handleError);
 
-app.listen(PORT);
+app.listen(PORT, () => {
+  console.log(process.env);
+});

@@ -5,7 +5,7 @@ const NotFoundError = require('../errors/not-found-err');
 const ForbiddenError = require('../errors/forbidden-err');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => {
       res.send(movies);
     })
@@ -13,38 +13,15 @@ const getMovies = (req, res, next) => {
 };
 
 const createMovie = (req, res, next) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-  } = req.body;
-
+  const { ...movieData } = req.body;
   const owner = req.user._id;
 
   Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    thumbnail,
+    ...movieData,
     owner,
-    movieId,
-    nameRU,
-    nameEN,
   })
-    .then((newMovie) => {
-      res.send(newMovie);
+    .then((movie) => {
+      res.send(movie);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {

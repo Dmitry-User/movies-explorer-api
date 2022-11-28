@@ -16,10 +16,11 @@ router.get('/crash-test', () => {
 
 router.post('/signup', verifyUserCreate, createUser);
 router.post('/signin', verifyLogin, login);
-router.get('/signout', auth, logout);
 
-router.use('/users', auth, userRouter);
-router.use('/movies', auth, moviesRouter);
+router.use(auth);
+router.use('/users', userRouter);
+router.use('/movies', moviesRouter);
+router.post('/signout', logout);
 
 router.use('*', (req, res, next) => {
   next(new NotFoundError('Запрашиваемый адрес не найден'));
