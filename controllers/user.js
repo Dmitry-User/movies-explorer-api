@@ -5,13 +5,19 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
-const { DEV_SECRET } = require('../utils/constants');
+const { DEV_SECRET } = require('../utils/config');
+const {
+  userIdNotFound,
+  dataIncorrect,
+  emailExists,
+  userLogout,
+} = require('../utils/constants');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id, { _id: 0 })
-    .orFail(new NotFoundError('Пользователь с указанным _id не найден'))
+    .orFail(new NotFoundError(userIdNotFound))
     .then((user) => {
       res.send(user);
     })
@@ -28,10 +34,10 @@ const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError(dataIncorrect));
       }
       if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с указанным email уже зарегистрирован'));
+        return next(new ConflictError(emailExists));
       }
       return next(err);
     });
@@ -42,16 +48,16 @@ const updateUser = (req, res, next) => {
   const { name, email } = req.body;
 
   User.findByIdAndUpdate(userId, { name, email }, { new: true, runValidators: true })
-    .orFail(new NotFoundError('Пользователь с указанным _id не найден'))
+    .orFail(new NotFoundError(userIdNotFound))
     .then((updatedUser) => {
       res.send(updatedUser);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные'));
+        return next(new BadRequestError(dataIncorrect));
       }
       if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с указанным email уже зарегистрирован'));
+        return next(new ConflictError(emailExists));
       }
       return next(err);
     });
@@ -70,8 +76,8 @@ const login = (req, res, next) => {
       res
         .cookie('authorization', token, {
           httpOnly: true,
-          // sameSite: 'None',
-          // secure: true,
+          sameSite: 'None',
+          secure: true,
           maxAge: 3600000 * 24 * 7,
         })
         .send({ token });
@@ -83,7 +89,7 @@ const logout = (req, res, next) => {
   try {
     res
       .clearCookie('authorization')
-      .send({ message: 'Вы вышли из профиля' });
+      .send({ message: userLogout });
   } catch (err) {
     next(err);
   }

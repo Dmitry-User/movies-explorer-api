@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const UnauthorizedError = require('../errors/unauthorized-err');
+const { loginIncorrect } = require('../utils/constants');
 
 const { Schema, model } = mongoose;
 
@@ -29,14 +30,14 @@ const userSchema = new Schema({
   toJSON: { useProjection: true },
 });
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function detectUser(email, password) {
   return this.findOne({ email })
     .select('+password')
-    .orFail(new UnauthorizedError('Неправильные почта или пароль'))
+    .orFail(new UnauthorizedError(loginIncorrect))
     .then((user) => bcrypt.compare(password, user.password)
       .then((matched) => {
         if (!matched) {
-          throw new UnauthorizedError('Неправильные почта или пароль');
+          throw new UnauthorizedError(loginIncorrect);
         }
         return user;
       }));

@@ -1,5 +1,13 @@
 const { celebrate, Joi } = require('celebrate');
-const { REGEX } = require('../utils/constants');
+const validator = require('validator');
+const { urlIncorrect } = require('../utils/constants');
+
+const validateUrl = (value, helpers) => {
+  if (validator.isURL(value)) {
+    return value;
+  }
+  return helpers.message(urlIncorrect);
+};
 
 const verifyMovieCreate = celebrate({
   body: Joi.object().keys({
@@ -8,9 +16,9 @@ const verifyMovieCreate = celebrate({
     duration: Joi.number().required(),
     year: Joi.string().required(),
     description: Joi.string().required(),
-    image: Joi.string().required().pattern(REGEX),
-    trailerLink: Joi.string().required().pattern(REGEX),
-    thumbnail: Joi.string().required().pattern(REGEX),
+    image: Joi.string().required().custom(validateUrl),
+    trailerLink: Joi.string().required().custom(validateUrl),
+    thumbnail: Joi.string().required().custom(validateUrl),
     movieId: Joi.number().required(),
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),

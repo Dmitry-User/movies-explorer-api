@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth');
 const { verifyLogin, verifyUserCreate } = require('../middlewares/verify-user');
 const { login, logout, createUser } = require('../controllers/user');
 const NotFoundError = require('../errors/not-found-err');
+const { routeNotFound } = require('../utils/constants');
 
 // проверка сервера, Pm2 должен его восстанавливать
 router.get('/crash-test', () => {
@@ -18,12 +19,13 @@ router.post('/signup', verifyUserCreate, createUser);
 router.post('/signin', verifyLogin, login);
 
 router.use(auth);
+
 router.use('/users', userRouter);
 router.use('/movies', moviesRouter);
 router.post('/signout', logout);
 
 router.use('*', (req, res, next) => {
-  next(new NotFoundError('Запрашиваемый адрес не найден'));
+  next(new NotFoundError(routeNotFound));
 });
 
 module.exports = router;

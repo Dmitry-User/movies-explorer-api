@@ -1,21 +1,24 @@
 require('dotenv').config();
-const express = require('express');
 const mongoose = require('mongoose');
+const express = require('express');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const { errors } = require('celebrate');
+
 const router = require('./routes');
 const limiter = require('./middlewares/limiter');
 const cors = require('./middlewares/cors');
 const handleError = require('./middlewares/handle-error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { MONGO_URL_DEV } = require('./utils/config');
 
 const {
   PORT = 3000,
-  MONGO_URL = 'mongodb://localhost:27017/bitmoviesdb',
+  NODE_ENV,
+  MONGO_URL_PROD,
 } = process.env;
 
-mongoose.connect(MONGO_URL);
+mongoose.connect(NODE_ENV === 'production' ? MONGO_URL_PROD : MONGO_URL_DEV);
 
 const app = express();
 
@@ -30,6 +33,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(handleError);
 
-app.listen(PORT, () => {
-  console.log(process.env);
-});
+app.listen(PORT);
