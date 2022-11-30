@@ -22,12 +22,12 @@ mongoose.connect(NODE_ENV === 'production' ? MONGO_URL_PROD : MONGO_URL_DEV);
 
 const app = express();
 
+app.use(requestLogger);
 app.use(limiter);
 app.use(cors);
 app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
-app.use(requestLogger);
 app.use(router);
 app.use(errorLogger);
 app.use(errors());
