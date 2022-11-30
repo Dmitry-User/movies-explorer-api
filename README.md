@@ -2,5 +2,5 @@
 
 Репозиторий для Api сервера дипломного проекта "Movies explorer"
 
-- Публичный IP: 158.160.37.51
+- Публичный IP: 51.250.92.116
 - Домен сервера: api.moviexplorers.nomoredomains.club
