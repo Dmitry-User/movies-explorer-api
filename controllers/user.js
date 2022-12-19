@@ -77,8 +77,8 @@ const login = (req, res, next) => {
         .cookie('authorization', token, {
           httpOnly: true,
           maxAge: 3600000 * 24 * 7,
-          // sameSite: 'None',
-          // secure: true,
+          sameSite: 'None',
+          secure: true,
         })
         .send({ token });
     })
